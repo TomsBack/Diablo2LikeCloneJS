@@ -88,8 +88,10 @@ export class Player extends Entity {
 
   recalcStats() {
     const cs = CLASS_STATS[this.className];
-    this.maxHP = cs.baseHP + this.vit * cs.hpPerVit + this.bonusHP;
-    this.maxMana = cs.baseMana + this.energy * cs.manaPerEnergy + this.bonusMana;
+    const levelHP = (cs.hpPerLevel || 0) * (this.level - 1);
+    const levelMana = (cs.manaPerLevel || 0) * (this.level - 1);
+    this.maxHP = cs.baseHP + this.vit * cs.hpPerVit + levelHP + this.bonusHP;
+    this.maxMana = cs.baseMana + this.energy * cs.manaPerEnergy + levelMana + this.bonusMana;
     this.hpRegen = this.vit * 0.08 + this.bonusHPRegen;
     this.manaRegen = this.energy * 0.12 + this.bonusManaRegen;
     this.attackRating = this.dex * 2 + this.level * 5;

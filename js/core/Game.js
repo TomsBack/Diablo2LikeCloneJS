@@ -1,4 +1,5 @@
-import { TILE_SIZE, TILE, MAX_DUNGEON_FLOOR, mapSizeForFloor } from './Constants.js';
+import { TILE_SIZE, TILE, MAX_DUNGEON_FLOOR, mapSizeForFloor, ELEMENT_COLORS } from './Constants.js';
+import { ParticleSystem } from './ParticleSystem.js';
 import { Camera } from './Camera.js';
 import { InputManager } from './InputManager.js';
 import { AssetGenerator } from './AssetGenerator.js';
@@ -73,6 +74,7 @@ export class Game {
     // Combat
     this.combatResolver = new CombatResolver(this);
     this.skillSystem = new SkillSystem(this);
+    this.particles = new ParticleSystem(800);
 
     // Events
     this._bindEvents();
@@ -89,6 +91,7 @@ export class Game {
   _bindEvents() {
     events.on('monsterDeath', ({ monster }) => {
       this.audio.playMonsterDeath();
+      this.particles.deathEffect(monster.worldX, monster.worldY);
       const drops = ItemGenerator.generateLoot(monster.level, monster.isBoss);
       for (const drop of drops) {
         if (drop.type === 'gold') {
@@ -126,6 +129,7 @@ export class Game {
 
     events.on('levelUp', ({ level }) => {
       this.audio.playLevelUp();
+      this.particles.levelUpEffect(this.player.worldX, this.player.worldY);
       this.showFloatingText(
         this.player.worldX, this.player.worldY - 50,
         `LEVEL UP! (${level})`, null, null, 'text-levelup'
@@ -332,7 +336,22 @@ export class Game {
     const spawnPoints = this.currentMap.spawnPoints;
     if (!spawnPoints || spawnPoints.length === 0) return;
 
-    const monsterTypes = ['zombie', 'skeleton', 'fallen', 'skeletonArcher', 'ghost'];
+    // D2-inspired monster pools per floor range (acts)
+    const monsterPools = {
+      1: ['zombie', 'skeleton', 'fallen', 'skeletonArcher', 'foulCrow'],
+      2: ['hungryDead', 'returned', 'fallen', 'fallenShaman', 'skeletonArcher', 'foulCrow'],
+      3: ['ghoul', 'boneWarrior', 'skeletonArcher', 'fallenShaman', 'ghost'],
+      4: ['leaper', 'scarab', 'mummy', 'skeletonArcher', 'returned'],
+      5: ['scarab', 'mummy', 'fetish', 'boneWarrior', 'ghost'],
+      6: ['fetish', 'willOWisp', 'ghoul', 'scarab', 'fallenShaman'],
+      7: ['willOWisp', 'ghost', 'oblivionKnight', 'boneWarrior', 'mummy'],
+      8: ['venom_lord', 'oblivionKnight', 'ghost', 'willOWisp', 'boneWarrior'],
+    };
+
+    // Get pool for this floor (cycle through if beyond defined floors)
+    const poolKey = Math.min(Math.ceil(floor / 2), 8);
+    const pool = monsterPools[poolKey] || monsterPools[8];
+
     const monsterCount = Math.min(spawnPoints.length / 4, 20 + floor * 3);
     const usedPoints = new Set();
 
@@ -348,28 +367,29 @@ export class Game {
       usedPoints.add(idx);
 
       const sp = spawnPoints[idx];
-      // Don't spawn on stairs
       if (this.currentMap.get(sp.x, sp.y) !== TILE.FLOOR) continue;
-      // Don't spawn near stairs up
       const stairsUp = this.currentMap.stairsUp;
       if (stairsUp && distance(sp.x, sp.y, stairsUp.x, stairsUp.y) < 5) continue;
 
-      const typeIdx = randomInt(0, Math.min(monsterTypes.length - 1, Math.floor(floor / 2)));
-      const type = monsterTypes[typeIdx];
+      const type = pool[randomInt(0, pool.length - 1)];
       const monsterLevel = Math.max(1, floor + randomInt(-1, 1));
       const monster = new Monster(sp.x, sp.y, type, monsterLevel);
       monster.sprite = this.assets.getMonsterSprite(type);
       this.monsters.push(monster);
     }
 
-    // Boss on every 4th floor
-    if (this.currentMap.bossRoom) {
-      const room = this.currentMap.bossRoom;
-      const bx = Math.floor(room.x + room.w / 2);
-      const by = Math.floor(room.y + room.h / 2);
-      const boss = new Monster(bx, by, 'boss', floor + 2);
-      boss.sprite = this.assets.getMonsterSprite('boss');
-      this.monsters.push(boss);
+    // Act bosses on specific floors
+    if (this.currentMap.bossRoom || floor % 4 === 0) {
+      const bossTypes = { 4: 'andariel', 8: 'duriel', 12: 'diablo', 16: 'diablo' };
+      const bossType = bossTypes[floor] || 'boss';
+      const room = this.currentMap.bossRoom || this.currentMap.rooms[this.currentMap.rooms.length - 1];
+      if (room) {
+        const bx = Math.floor(room.x + room.w / 2);
+        const by = Math.floor(room.y + room.h / 2);
+        const boss = new Monster(bx, by, bossType, floor + 3);
+        boss.sprite = this.assets.getMonsterSprite(bossType);
+        this.monsters.push(boss);
+      }
     }
   }
 
@@ -710,6 +730,9 @@ export class Game {
     }
     this.lootDrops = this.lootDrops.filter(d => !d.expired);
 
+    // Particles
+    this.particles.update(dt);
+
     // AoE effects
     for (const fx of this.aoeEffects) {
       fx.duration -= dt;
@@ -799,6 +822,9 @@ export class Game {
       ctx.fill();
       ctx.globalAlpha = 1;
     }
+
+    // Particles (in world space)
+    this.particles.render(ctx);
 
     this.camera.endFrame(ctx);
 

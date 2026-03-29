@@ -243,4 +243,8 @@ export const STAT_DISPLAY_NAMES = {
   bonusColdDamage: '+%d Cold Damage',
   bonusLightningDamage: '+%d Lightning Damage',
   bonusPoisonDamage: '+%d Poison Damage',
+  bonusResistFire: '+%d% Fire Resistance',
+  bonusResistCold: '+%d% Cold Resistance',
+  bonusResistLightning: '+%d% Lightning Resistance',
+  bonusResistPoison: '+%d% Poison Resistance',
 };

@@ -204,11 +204,27 @@ export class AssetGenerator {
     return this.generateEntitySprite(key, TILE_SIZE, TILE_SIZE, (ctx, w, h) => {
       const configs = {
         zombie: { color: '#4a6a3a', size: 14, eyes: '#ff0' },
+        hungryDead: { color: '#3a5a2a', size: 14, eyes: '#ff0' },
+        ghoul: { color: '#2a4a1a', size: 15, eyes: '#0f0' },
         skeleton: { color: '#c8c8a0', size: 12, eyes: '#f00' },
+        returned: { color: '#b8b890', size: 12, eyes: '#f00' },
+        boneWarrior: { color: '#d8d8b0', size: 13, eyes: '#f00' },
         skeletonArcher: { color: '#b8b890', size: 12, eyes: '#f00' },
         fallen: { color: '#8b2500', size: 10, eyes: '#ff0' },
+        fallenShaman: { color: '#aa4422', size: 11, eyes: '#ff0' },
+        foulCrow: { color: '#2a2a2a', size: 8, eyes: '#ff0' },
+        leaper: { color: '#8a7a4a', size: 11, eyes: '#ff0' },
+        scarab: { color: '#1a3a1a', size: 13, eyes: '#0f0' },
+        mummy: { color: '#8a7a5a', size: 14, eyes: '#ff0' },
+        fetish: { color: '#4a2a1a', size: 9, eyes: '#ff0' },
+        willOWisp: { color: 'rgba(200,200,100,0.6)', size: 10, eyes: '#fff' },
         ghost: { color: 'rgba(100,150,200,0.6)', size: 14, eyes: '#fff' },
+        venom_lord: { color: '#6a1a0a', size: 18, eyes: '#ff4400' },
+        oblivionKnight: { color: '#3a1a3a', size: 16, eyes: '#cc66ff' },
         boss: { color: '#6a1a1a', size: 20, eyes: '#ff4400' },
+        andariel: { color: '#4a0a2a', size: 22, eyes: '#ff00ff' },
+        duriel: { color: '#2a3a5a', size: 24, eyes: '#66bbff' },
+        diablo: { color: '#8a1a0a', size: 26, eyes: '#ff2200' },
       };
       const cfg = configs[type] || configs.zombie;
 

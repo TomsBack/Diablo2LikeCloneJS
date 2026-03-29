@@ -52,6 +52,12 @@ export class CombatResolver {
       cssClass
     );
 
+    // Particle effects on hit
+    this.game.particles.bloodSplat(target.worldX, target.worldY);
+    if (attacker.bonusFireDamage > 0) this.game.particles.elementalHit(target.worldX, target.worldY, 'fire');
+    if (attacker.bonusColdDamage > 0) this.game.particles.elementalHit(target.worldX, target.worldY, 'cold');
+    if (attacker.bonusLightningDamage > 0) this.game.particles.elementalHit(target.worldX, target.worldY, 'lightning');
+
     this.game.camera.addShake(isCrit ? 5 : 2, 0.1);
 
     if (!target.alive) {
