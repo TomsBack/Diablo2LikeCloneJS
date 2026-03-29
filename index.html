@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Diablo II - Dark Wanderer</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <canvas id="gameCanvas"></canvas>
+
+  <!-- HUD Overlay -->
+  <div id="hud" class="hidden">
+    <div id="hud-bottom">
+      <div id="health-orb-container" class="orb-container">
+        <canvas id="health-orb" width="120" height="120"></canvas>
+        <span id="health-text" class="orb-text">100/100</span>
+      </div>
+
+      <div id="skill-bar">
+        <div id="potion-belt">
+          <div class="potion-slot" data-slot="0"></div>
+          <div class="potion-slot" data-slot="1"></div>
+          <div class="potion-slot" data-slot="2"></div>
+          <div class="potion-slot" data-slot="3"></div>
+        </div>
+        <div id="skill-slots">
+          <div class="skill-slot" data-skill="0"><span class="skill-key">1</span></div>
+          <div class="skill-slot" data-skill="1"><span class="skill-key">2</span></div>
+          <div class="skill-slot" data-skill="2"><span class="skill-key">3</span></div>
+          <div class="skill-slot" data-skill="3"><span class="skill-key">4</span></div>
+          <div class="skill-slot" data-skill="4"><span class="skill-key">5</span></div>
+          <div class="skill-slot" data-skill="5"><span class="skill-key">6</span></div>
+          <div class="skill-slot" data-skill="6"><span class="skill-key">7</span></div>
+          <div class="skill-slot" data-skill="7"><span class="skill-key">8</span></div>
+        </div>
+      </div>
+
+      <div id="mana-orb-container" class="orb-container">
+        <canvas id="mana-orb" width="120" height="120"></canvas>
+        <span id="mana-text" class="orb-text">50/50</span>
+      </div>
+    </div>
+
+    <div id="xp-bar-container">
+      <div id="xp-bar"></div>
+      <span id="xp-text">Level 1</span>
+    </div>
+
+    <canvas id="minimap" width="180" height="180"></canvas>
+  </div>
+
+  <!-- Panels -->
+  <div id="inventory-panel" class="panel hidden">
+    <div class="panel-header">
+      <span>Inventory</span>
+      <button class="panel-close">&times;</button>
+    </div>
+    <div id="equipment-slots"></div>
+    <canvas id="inventory-grid" width="400" height="160"></canvas>
+    <div id="gold-display">Gold: <span id="gold-amount">0</span></div>
+  </div>
+
+  <div id="character-panel" class="panel hidden">
+    <div class="panel-header">
+      <span>Character</span>
+      <button class="panel-close">&times;</button>
+    </div>
+    <div id="char-stats"></div>
+  </div>
+
+  <div id="skill-panel" class="panel hidden">
+    <div class="panel-header">
+      <span>Skills</span>
+      <button class="panel-close">&times;</button>
+    </div>
+    <canvas id="skill-tree-canvas" width="400" height="500"></canvas>
+  </div>
+
+  <!-- Tooltip -->
+  <div id="tooltip" class="hidden"></div>
+
+  <!-- Menu Screen -->
+  <div id="menu-screen">
+    <div id="menu-title">
+      <h1>DARK WANDERER</h1>
+      <p>A Diablo II Tribute</p>
+    </div>
+    <div id="class-select" class="hidden">
+      <h2>Choose Your Class</h2>
+      <div id="class-options">
+        <div class="class-option" data-class="warrior">
+          <div class="class-icon warrior-icon"></div>
+          <h3>Warrior</h3>
+          <p>Master of melee combat. High strength and vitality.</p>
+        </div>
+        <div class="class-option" data-class="mage">
+          <div class="class-icon mage-icon"></div>
+          <h3>Mage</h3>
+          <p>Wielder of arcane power. Devastating spells.</p>
+        </div>
+        <div class="class-option" data-class="rogue">
+          <div class="class-icon rogue-icon"></div>
+          <h3>Rogue</h3>
+          <p>Swift and deadly. Ranged attacks and agility.</p>
+        </div>
+      </div>
+    </div>
+    <button id="new-game-btn" class="menu-btn">New Game</button>
+    <button id="continue-btn" class="menu-btn hidden">Continue</button>
+  </div>
+
+  <!-- Dialogue Panel -->
+  <div id="dialogue-panel" class="hidden">
+    <div id="dialogue-npc-name"></div>
+    <div id="dialogue-text"></div>
+    <div id="dialogue-options"></div>
+  </div>
+
+  <!-- Floating text container -->
+  <div id="floating-texts"></div>
+
+  <script type="module" src="/js/main.js"></script>
+</body>
+</html>
